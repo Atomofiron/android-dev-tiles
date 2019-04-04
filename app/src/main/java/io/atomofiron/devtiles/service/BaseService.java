@@ -43,11 +43,9 @@ public abstract class BaseService extends TileService implements Callback {
         onClick(state == State.ACTIVE);
     }
 
-    protected /*abstract*/ void onClick(boolean isActive) {
-    }
+    protected abstract void onClick(boolean isActive);
 
-    protected /*abstract*/ void onUpdate() {
-    }
+    protected abstract void onUpdate();
 
     @Override
     public void onStartListening() {
