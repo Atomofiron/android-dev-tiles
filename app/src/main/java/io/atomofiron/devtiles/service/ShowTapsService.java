@@ -2,7 +2,6 @@ package io.atomofiron.devtiles.service;
 
 import android.annotation.SuppressLint;
 import android.provider.Settings.System;
-import android.service.quicksettings.Tile;
 
 import io.atomofiron.devtiles.util.Cmd;
 
