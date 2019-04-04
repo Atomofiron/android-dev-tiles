@@ -4,16 +4,31 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "io.atomofiron.devtiles"
-        minSdkVersion 22
-        //targetSdkVersion 28 // noinspection ExpiredTargetSdkVersion
-        targetSdkVersion 22
         versionCode 1
         versionName "1.0"
     }
     buildTypes {
-        release {
+        debug {
             minifyEnabled false
+        }
+        release {
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    flavorDimensions "wtf"
+
+    productFlavors {
+        apk {
+            dimension "wtf"
+            minSdkVersion 22
+            targetSdkVersion 22
+        }
+        market {
+            dimension "wtf"
+            minSdkVersion 24
+            targetSdkVersion 28
         }
     }
 }
