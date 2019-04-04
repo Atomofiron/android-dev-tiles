@@ -29,7 +29,6 @@ public class BoundsService extends BaseService {
 
     @Override
     protected void onUpdate() {
-
         run(GET_PROP);
     }
 
