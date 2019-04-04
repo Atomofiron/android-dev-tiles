@@ -14,10 +14,9 @@ public class ShowTapsService extends BaseService {
     private static final int DISABLE = 0;
 
     @Override
-    public void onClick() {
+    public void onClick(boolean isActive) {
         boolean success = false;
-        boolean activate = getQsTile().getState() != Tile.STATE_ACTIVE;
-        int value = activate ? ENABLE : DISABLE;
+        int value = isActive ? DISABLE : ENABLE;
 
         try {
             success = System.putInt(getContentResolver(), KEY, value);
@@ -29,12 +28,11 @@ public class ShowTapsService extends BaseService {
             log("exc: " + e.toString());
         }
 
-        if (success) updateTile(activate);
+        if (success) updateTile(!isActive);
     }
 
     @Override
-    public void onStartListening() {
-        super.onStartListening();
+    public void onUpdate() {
         try {
             int state = System.getInt(getContentResolver(), KEY);
             updateTile(state == ENABLE);

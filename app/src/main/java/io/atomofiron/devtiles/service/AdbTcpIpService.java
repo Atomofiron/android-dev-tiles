@@ -1,7 +1,6 @@
 package io.atomofiron.devtiles.service;
 
 import android.annotation.SuppressLint;
-import android.service.quicksettings.Tile;
 import android.widget.Toast;
 
 import java.util.regex.Matcher;
@@ -26,37 +25,21 @@ public class AdbTcpIpService extends BaseService {
 
     {
         needSu = true;
+        unavailableIconResId = R.drawable.ic_qs_adb_tcpip_unavailable;
     }
 
     @Override
-    public void onClick() {
-        super.onClick();
+    public void onClick(boolean isActive) {
+        String port = isActive ? DISABLE_PORT : this.port;
 
-        if (!isSuGranted()) return;
-
-        String port;
-        switch (getQsTile().getState()) {
-            case Tile.STATE_INACTIVE:
-                port = this.port;
-                break;
-            case Tile.STATE_ACTIVE:
-                port = DISABLE_PORT;
-                break;
-            default:
-                return;
-        }
-
-        updateTile(Tile.STATE_UNAVAILABLE);
+        updateTile(isActive ? State.INACTIVATING : State.ACTIVATING);
 
         run(String.format(SET_PROP, port), GET_IP_AND_PROP);
     }
 
     @Override
-    public void onStartListening() {
-        super.onStartListening();
-
-        if (isSuGranted())
-            run(GET_IP_AND_PROP);
+    protected void onUpdate() {
+        run(GET_IP_AND_PROP);
     }
 
     @Override
@@ -64,7 +47,7 @@ public class AdbTcpIpService extends BaseService {
         super.onResult(result);
 
         if (!result.success || result.message == null) {
-            updateTile(Tile.STATE_INACTIVE, "");
+            updateTile(State.INACTIVE);
 
             String message = (result.message == null) ? getString(R.string.error) : result.message;
             Toast.makeText(this, message, Toast.LENGTH_LONG).show();
@@ -78,10 +61,10 @@ public class AdbTcpIpService extends BaseService {
         }
 
         if (result.message.endsWith(port)) {
-            updateTile(Tile.STATE_ACTIVE, ip + ":" + port);
+            updateTile(State.ACTIVE, ip + ":" + port);
         } else {
             //desc updateTile(Tile.STATE_INACTIVE, "");
-            updateTile(Tile.STATE_INACTIVE, getString(R.string.adb_over_network));
+            updateTile(State.INACTIVE, getString(R.string.adb_over_network));
         }
     }
 }

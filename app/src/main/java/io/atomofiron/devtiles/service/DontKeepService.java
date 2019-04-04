@@ -3,7 +3,6 @@ package io.atomofiron.devtiles.service;
 import android.annotation.SuppressLint;
 import android.provider.Settings;
 import android.provider.Settings.System;
-import android.service.quicksettings.Tile;
 
 @SuppressLint("NewApi")
 public class DontKeepService extends BaseService {
@@ -12,14 +11,11 @@ public class DontKeepService extends BaseService {
     private static final int DISABLE = 0;
 
     @Override
-    public void onClick() {
-        log("onClick");
-
+    public void onClick(boolean isActive) {
         try {
-            boolean activate = getQsTile().getState() != Tile.STATE_ACTIVE;
-            boolean success = Settings.Global.putInt(getContentResolver(), KEY, activate ? ENABLE : DISABLE);
+            boolean success = Settings.Global.putInt(getContentResolver(), KEY, isActive ? DISABLE : ENABLE);
 
-            if (success) updateTile(activate);
+            if (success) updateTile(!isActive);
             log("success: " + success);
         } catch (Exception e) {
             log("exc: " + e.toString());
@@ -27,8 +23,7 @@ public class DontKeepService extends BaseService {
     }
 
     @Override
-    public void onStartListening() {
-        super.onStartListening();
+    public void onUpdate() {
         try {
             int state = System.getInt(getContentResolver(), KEY);
             updateTile(state == ENABLE);
