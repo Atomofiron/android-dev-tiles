@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Dev Tiles</string>
+    <string name="error">Ошибка</string>
+
+    <string name="show_layout_bounds">Границы элементов</string>
+    <string name="adb_over_network">Отладка по сети</string>
+    <string name="show_touches">Визуальный отклик</string>
+    <string name="dont_keep_activities">Не сохранять активности</string>
+</resources>
