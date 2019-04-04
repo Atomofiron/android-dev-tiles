@@ -55,8 +55,9 @@ public abstract class BaseService extends TileService implements Callback {
             state = (getQsTile().getState() == Tile.STATE_ACTIVE) ? State.ACTIVE : State.INACTIVE;
         }
 
-        if (defaultIconResId == UNDEFINED) {
-            defaultIconResId = getQsTile().getIcon().getResId();
+        int iconResId = getQsTile().getIcon().getResId();
+        if (defaultIconResId == UNDEFINED && iconResId != unavailableIconResId) {
+            defaultIconResId = iconResId;
         }
 
         if (needSu) {
