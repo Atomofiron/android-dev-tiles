@@ -1,8 +1,6 @@
 package io.atomofiron.devtiles.util;
 
 import android.os.AsyncTask;
-import java.io.InputStream;
-import java.io.OutputStream;
 
 import io.atomofiron.devtiles.I;
 
