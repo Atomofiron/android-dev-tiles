@@ -16,8 +16,8 @@ public abstract class SettingsService extends BaseService {
     private static final String SECURE = "secure";
     private static final String GLOBAL = "global";
 
-    protected Uri uri;
-    protected String name;
+    protected Uri uri = null;
+    protected String name = null;
 
     private int get() {
         String uri = this.uri.toString();
@@ -67,6 +67,12 @@ public abstract class SettingsService extends BaseService {
 
     @Override
     public final void onUpdate() {
+        if (uri == null)
+            throw new NullPointerException("SettingsService.uri == null!");
+
+        if (name == null)
+            throw new NullPointerException("SettingsService.name == null!");
+
         try {
             int state = get();
             updateTile(state == ENABLE);
