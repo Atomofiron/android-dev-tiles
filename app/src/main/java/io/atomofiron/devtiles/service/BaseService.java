@@ -28,14 +28,16 @@ public abstract class BaseService extends TileService implements Callback {
     }
 
     private static final int UNDEFINED = -1;
-    protected boolean needSu = false;
+
     private boolean suGranted = false;
     private State state = null;
+
+    protected boolean needSu = false;
     protected int unavailableIconResId = UNDEFINED;
     protected int defaultIconResId = UNDEFINED;
 
     @Override
-    public void onClick() {
+    public final void onClick() {
         log("onClick");
         if (state != State.ACTIVE & state != State.INACTIVE) return;
         if (needSu && !isSuGranted()) return;
@@ -48,7 +50,7 @@ public abstract class BaseService extends TileService implements Callback {
     protected abstract void onUpdate();
 
     @Override
-    public void onStartListening() {
+    public final void onStartListening() {
         log("onStartListening()");
 
         if (state == null) {
@@ -75,7 +77,19 @@ public abstract class BaseService extends TileService implements Callback {
         }
     }
 
-    public void run(String... cmd) {
+    @Override
+    public final void onStopListening() {
+    }
+
+    @Override
+    public final void onTileAdded() {
+    }
+
+    @Override
+    public final void onTileRemoved() {
+    }
+
+    protected final void run(String... cmd) {
         log("run: " + cmd[0]);
         new AsyncRuntime(this).execute(cmd);
     }
@@ -95,15 +109,15 @@ public abstract class BaseService extends TileService implements Callback {
         return suGranted;
     }
 
-    protected void updateTile(boolean activate) {
+    protected final void updateTile(boolean activate) {
         updateTile(activate ? State.ACTIVE : State.INACTIVE);
     }
 
-    protected void updateTile(State state) {
+    protected final void updateTile(State state) {
         updateTile(state, getQsTile().getLabel());
     }
 
-    protected void updateTile(State state, CharSequence description) {
+    protected final void updateTile(State state, CharSequence description) {
         this.state = state;
 
         Tile tile = getQsTile();
@@ -117,7 +131,7 @@ public abstract class BaseService extends TileService implements Callback {
         tile.updateTile();
     }
 
-    protected void log(String s) {
+    protected final void log(String s) {
         if (I.LOGGING)
             I.log(getClass().getSimpleName() + "." + s);
     }
