@@ -1,6 +1,5 @@
 package io.atomofiron.devtiles.service;
 
-import android.annotation.SuppressLint;
 import android.widget.Toast;
 
 import java.util.regex.Matcher;
@@ -9,7 +8,6 @@ import java.util.regex.Pattern;
 import io.atomofiron.devtiles.R;
 import io.atomofiron.devtiles.util.Result;
 
-@SuppressLint("NewApi")
 public class AdbTcpIpService extends BaseService {
     private static final String SET_PROP = "su -c setprop service.adb.tcp.port %s && stop adbd && start adbd";
     private static final String GET_IP_AND_PROP = "ip route show; getprop service.adb.tcp.port";
