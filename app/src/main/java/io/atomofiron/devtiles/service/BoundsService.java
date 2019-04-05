@@ -35,7 +35,7 @@ public class BoundsService extends BaseService {
 
         if (!result.success || result.message == null) {
             updateTile(State.INACTIVE);
-        } else if (result.message.equals(TRUE)) {
+        } else if (result.message.endsWith(TRUE)) {
             updateTile(State.ACTIVE);
         } else {
             updateTile(State.INACTIVE);
