@@ -1,7 +1,9 @@
 package io.atomofiron.devtiles.service;
 
 import android.annotation.SuppressLint;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Icon;
+import android.preference.PreferenceManager;
 import android.service.quicksettings.Tile;
 import android.service.quicksettings.TileService;
 
@@ -32,12 +34,31 @@ public abstract class BaseService extends TileService implements Callback {
     protected static final String SU_CHECK = "su -c echo " + IS_SU + " || echo " + NO_SU;
     private static final int UNDEFINED = -1;
 
+    private SharedPreferences sp;
+    private final String KEY_SU_GRANTED = "KEY_SU_GRANTED_FOR_" + getName().toUpperCase();
+
     private boolean suGranted = false;
     private State state = null;
 
     protected boolean needSu = false;
     protected int unavailableIconResId = UNDEFINED;
     protected int defaultIconResId = UNDEFINED;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        sp = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+
+        suGranted = sp.getBoolean(KEY_SU_GRANTED, false);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        sp.edit().putBoolean(KEY_SU_GRANTED, suGranted).apply();
+    }
 
     @Override
     public final void onClick() {
@@ -135,8 +156,12 @@ public abstract class BaseService extends TileService implements Callback {
         tile.updateTile();
     }
 
+    private String getName() {
+        return getClass().getSimpleName();
+    }
+
     protected final void log(String s) {
         if (I.LOGGING)
-            I.log(getClass().getSimpleName() + "." + s);
+            I.log(getName() + "." + s);
     }
 }
