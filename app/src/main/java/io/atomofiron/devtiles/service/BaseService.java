@@ -27,6 +27,9 @@ public abstract class BaseService extends TileService implements Callback {
         }
     }
 
+    private static final String IS_SU = "IS_SU";
+    private static final String NO_SU = "NO_SU";
+    protected static final String SU_CHECK = "su -c echo " + IS_SU + " || echo " + NO_SU;
     private static final int UNDEFINED = -1;
 
     private boolean suGranted = false;
@@ -62,18 +65,12 @@ public abstract class BaseService extends TileService implements Callback {
             defaultIconResId = iconResId;
         }
 
-        if (needSu) {
-            log("needSu");
-            if (checkSuGranted()) {
-                log("onUpdate");
-                onUpdate();
-            } else {
-                log("!checkSuGranted()");
-                updateTile(State.UNAVAILABLE);
-            }
-        } else {
-            log("onUpdate");
-            onUpdate();
+        log("onUpdate");
+        onUpdate();
+
+        if (needSu && !suGranted && !checkSuGranted()) {
+            log("!checkSuGranted()");
+            updateTile((state == State.ACTIVE) ? State.INACTIVATING : State.UNAVAILABLE);
         }
     }
 
@@ -89,13 +86,20 @@ public abstract class BaseService extends TileService implements Callback {
     public final void onTileRemoved() {
     }
 
+    public void onResult(Result result) {
+        log("onResult: " + result.success);
+
+        if (needSu && result.message != null) {
+            if (result.message.startsWith(IS_SU))
+                suGranted = true;
+            else if (result.message.startsWith(NO_SU))
+                suGranted = false;
+        }
+    }
+
     protected final void run(String... cmd) {
         log("run: " + cmd[0]);
         new AsyncRuntime(this).execute(cmd);
-    }
-
-    public void onResult(Result result) {
-        log("onResult: " + result.success);
     }
 
     protected final boolean isSuGranted() {
@@ -103,7 +107,7 @@ public abstract class BaseService extends TileService implements Callback {
         return suGranted;
     }
 
-    private boolean checkSuGranted() {
+    protected final boolean checkSuGranted() {
         suGranted = Cmd.run(Cmd.SU);
         log("checkSuGranted: " + suGranted);
         return suGranted;

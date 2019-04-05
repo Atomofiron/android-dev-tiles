@@ -21,7 +21,7 @@ public class BoundsService extends BaseService {
 
         updateTile(isActive ? State.INACTIVATING : State.ACTIVATING);
 
-        run(String.format(SET_PROP, enable), GET_PROP);
+        run(SU_CHECK, String.format(SET_PROP, enable), GET_PROP);
     }
 
     @Override

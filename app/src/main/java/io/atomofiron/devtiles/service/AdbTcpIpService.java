@@ -32,7 +32,7 @@ public class AdbTcpIpService extends BaseService {
 
         updateTile(isActive ? State.INACTIVATING : State.ACTIVATING);
 
-        run(String.format(SET_PROP, port), GET_IP_AND_PROP);
+        run(SU_CHECK, String.format(SET_PROP, port), GET_IP_AND_PROP);
     }
 
     @Override
@@ -59,7 +59,7 @@ public class AdbTcpIpService extends BaseService {
         }
 
         if (result.message.endsWith(port)) {
-            updateTile(State.ACTIVE, ip + ":" + port);
+            updateTile(isSuGranted() ? State.ACTIVE : State.INACTIVATING, ip + ":" + port);
         } else {
             //desc updateTile(Tile.STATE_INACTIVE, "");
             updateTile(State.INACTIVE, getString(R.string.adb_over_network));
