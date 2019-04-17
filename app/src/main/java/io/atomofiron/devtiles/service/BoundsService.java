@@ -1,11 +1,14 @@
 package io.atomofiron.devtiles.service;
 
+import android.os.SystemProperties;
+
 import io.atomofiron.devtiles.R;
 import io.atomofiron.devtiles.util.Result;
 
 public class BoundsService extends BaseService {
-    private static final String SET_PROP = "su -c setprop debug.layout %1$s && service call activity 1599295570 1>/dev/null";
-    private static final String GET_PROP = "getprop debug.layout";
+    private static final String PROP = "debug.layout";
+    private static final String SET_PROP = "su -c setprop " + PROP + " %1$s && service call activity 1599295570 1>/dev/null";
+    private static final String GET_PROP = "getprop " + PROP;
 
     private static final String TRUE = "true";
     private static final String FALSE = "false";
@@ -19,14 +22,28 @@ public class BoundsService extends BaseService {
     public void onClick(boolean isActive) {
         String enable = isActive ? FALSE : TRUE;
 
-        updateTile(isActive ? State.INACTIVATING : State.ACTIVATING);
+        try {
+            SystemProperties.set(PROP, enable);
+        } catch (Exception e) {
+            log("exc: " + e.toString());
 
-        run(SU_CHECK, String.format(SET_PROP, enable), GET_PROP);
+            updateTile(isActive ? State.INACTIVATING : State.ACTIVATING);
+
+            run(SU_CHECK, String.format(SET_PROP, enable), GET_PROP);
+        }
     }
 
     @Override
     protected void onUpdate() {
-        run(GET_PROP);
+        try {
+            String state = SystemProperties.get(PROP);
+            log("state: " + state);
+            updateTile(Boolean.parseBoolean(state) ? State.ACTIVE : State.INACTIVE);
+        } catch (Exception e) {
+            log("exc: " + e.toString());
+
+            run(GET_PROP);
+        }
     }
 
     @Override
