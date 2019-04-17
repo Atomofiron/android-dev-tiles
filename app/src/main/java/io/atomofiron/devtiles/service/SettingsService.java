@@ -53,8 +53,11 @@ public abstract class SettingsService extends BaseService {
         try {
             success = set(value);
 
+            needSu = false;
         } catch (SecurityException e) {
             log("exc: " + e.toString());
+
+            needSu = true;
 
             success = Cmd.run(String.format(CONTENT_TEMPLATE, uri, name, value));
         } catch (Exception e) {
