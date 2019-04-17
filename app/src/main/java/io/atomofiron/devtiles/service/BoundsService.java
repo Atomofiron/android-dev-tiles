@@ -16,7 +16,7 @@ public class BoundsService extends PropertiesService {
 
     @Override
     protected String getSetterCommandSuffix() {
-        return " && service call activity 1599295570";
+        return " && service call activity 1599295570 1>/dev/null";
     }
 
     @Override
