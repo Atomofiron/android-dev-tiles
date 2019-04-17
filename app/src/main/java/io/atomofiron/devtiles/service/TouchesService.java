@@ -4,7 +4,7 @@ import android.annotation.SuppressLint;
 import android.provider.Settings;
 
 @SuppressLint("NewApi")
-public class ShowTapsService extends SettingsService {
+public class TouchesService extends SettingsService {
     private static final String NAME = "show_touches";
 
     {

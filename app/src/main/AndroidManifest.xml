@@ -47,7 +47,7 @@
             </intent-filter>
         </service>
         <service
-            android:name=".service.ShowTapsService"
+            android:name=".service.TouchesService"
             android:label="@string/show_touches"
             android:icon="@drawable/pointer_spot_touch"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
