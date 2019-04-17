@@ -1,5 +1,6 @@
 package io.atomofiron.devtiles.util;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -44,28 +45,29 @@ public class Cmd {
             success = process.waitFor() == SUCCESS_CODE;
             log("success: " + success);
 
-            byte[] buf = new byte[8];
-            InputStream stream;
-            if (success) {
-                stream = process.getInputStream();
-            } else {
-                stream = process.getErrorStream();
-            }
-            int red;
-            StringBuilder builder = new StringBuilder();
-            while ((red = stream.read(buf)) > 0) {
-                log("red: " + red);
-                builder.append(new String(buf, 0, red));
-            }
-            stream.close();
+            String input = readStream(process.getInputStream());
+            log("input:\n" + input);
+            String error = readStream(process.getErrorStream());
+            log("error:\n" + error);
 
-            String message = builder.toString();
-            log("message:\n" + message);
-            return new Result(success, message);
+            return new Result(success, success ? input : error);
         } catch (Exception exception) {
             log("exc: " + exception.toString());
             return new Result(exception.toString());
         }
+    }
+
+    private static String readStream(InputStream stream) throws IOException {
+        byte[] buf = new byte[8];
+        int red;
+        StringBuilder builder = new StringBuilder();
+        while ((red = stream.read(buf)) > 0) {
+            log("red: " + red);
+            builder.append(new String(buf, 0, red));
+        }
+        stream.close();
+
+        return builder.toString();
     }
 
     private static void log(String s) {

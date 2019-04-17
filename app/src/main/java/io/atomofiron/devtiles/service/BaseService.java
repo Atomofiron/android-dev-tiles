@@ -119,7 +119,6 @@ public abstract class BaseService extends TileService implements Callback {
     }
 
     protected final void run(String... cmd) {
-        log("run: " + cmd[0]);
         new AsyncRuntime(this).execute(cmd);
     }
 

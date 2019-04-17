@@ -14,6 +14,13 @@ public class AsyncRuntime extends AsyncTask<String, Void, Result> {
 
     @Override
     protected Result doInBackground(String... args) {
+        StringBuilder sb = new StringBuilder("[ ");
+        for (int i = 0; i < args.length; i++) {
+            if (i > 0) sb.append(", ");
+
+            sb.append(args[i]);
+        }
+        log("run: " + sb.append(" ]").toString());
         return Cmd.run(Cmd.SHELL, args);
     }
 
