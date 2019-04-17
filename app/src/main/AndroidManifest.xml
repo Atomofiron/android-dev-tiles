@@ -56,6 +56,15 @@
             </intent-filter>
         </service>
         <service
+            android:name=".service.PointerService"
+            android:label="@string/pointer_location"
+            android:icon="@drawable/ic_pointer_location"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
+        <service
             android:name=".service.DontKeepService"
             android:label="@string/dont_keep_activities"
             android:icon="@drawable/ic_qs_exit"

@@ -6,5 +6,6 @@
     <string name="show_layout_bounds">Show layout bounds</string>
     <string name="adb_over_network">ADB over network</string>
     <string name="show_touches">Show taps</string>
+    <string name="pointer_location">Pointer location</string>
     <string name="dont_keep_activities">Don’t keep activities</string>
 </resources>
