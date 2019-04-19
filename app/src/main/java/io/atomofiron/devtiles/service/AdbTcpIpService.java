@@ -9,7 +9,7 @@ import io.atomofiron.devtiles.R;
 import io.atomofiron.devtiles.util.Result;
 
 public class AdbTcpIpService extends BaseService {
-    private static final String SET_PROP = "su -c setprop service.adb.tcp.port %s && stop adbd && start adbd";
+    private static final String SET_PROP = "setprop service.adb.tcp.port %s && stop adbd && start adbd";
     private static final String GET_IP_AND_PROP = "ip route show; getprop service.adb.tcp.port";
     private static final String GET_IP_WIFI = "ip route show dev `getprop wifi.interface`";
 
@@ -32,7 +32,7 @@ public class AdbTcpIpService extends BaseService {
 
         updateTile(isActive ? State.INACTIVATING : State.ACTIVATING);
 
-        run(SU_CHECK, String.format(SET_PROP, port), GET_IP_AND_PROP);
+        runAsSu(SU_CHECK, String.format(SET_PROP, port), GET_IP_AND_PROP);
     }
 
     @Override

@@ -26,6 +26,14 @@ public class Cmd {
     }
 
     public static Result run(String shell, String... args) {
+        StringBuilder sb = new StringBuilder("[ ");
+        for (int i = 0; i < args.length; i++) {
+            if (i > 0) sb.append(", ");
+
+            sb.append(args[i]);
+        }
+        log("run (" + shell + "): " + sb.append(" ]").toString());
+
         boolean success;
         Process process;
 

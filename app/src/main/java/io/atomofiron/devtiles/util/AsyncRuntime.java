@@ -6,22 +6,22 @@ import io.atomofiron.devtiles.I;
 
 public class AsyncRuntime extends AsyncTask<String, Void, Result> {
 
-    private Callback callback;
+    private final String shell;
+    private final Callback callback;
 
     public AsyncRuntime(Callback callback) {
+        this.shell = Cmd.SHELL;
+        this.callback = callback;
+    }
+
+    public AsyncRuntime(String shell, Callback callback) {
+        this.shell = shell;
         this.callback = callback;
     }
 
     @Override
     protected Result doInBackground(String... args) {
-        StringBuilder sb = new StringBuilder("[ ");
-        for (int i = 0; i < args.length; i++) {
-            if (i > 0) sb.append(", ");
-
-            sb.append(args[i]);
-        }
-        log("run: " + sb.append(" ]").toString());
-        return Cmd.run(Cmd.SHELL, args);
+        return Cmd.run(shell, args);
     }
 
     @Override

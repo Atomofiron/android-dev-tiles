@@ -12,7 +12,7 @@ public abstract class PropertiesService extends BaseService {
 
     {
         PROP = getProp();
-        SET_PROP = "su -c setprop " + PROP + " %s %s";
+        SET_PROP = "setprop " + PROP + " %s %s";
         GET_PROP = "getprop " + PROP;
     }
 
@@ -41,7 +41,7 @@ public abstract class PropertiesService extends BaseService {
 
             updateTile(isActive ? State.INACTIVATING : State.ACTIVATING);
 
-            run(String.format(SET_PROP, value, getSetterCommandSuffix()), GET_PROP);
+            runAsSu(String.format(SET_PROP, value, getSetterCommandSuffix()), GET_PROP);
         }
     }
 

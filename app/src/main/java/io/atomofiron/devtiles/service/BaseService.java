@@ -125,6 +125,10 @@ public abstract class BaseService extends TileService implements Callback {
         new AsyncRuntime(this).execute(cmd);
     }
 
+	protected final void runAsSu(String... cmd) {
+		new AsyncRuntime(Cmd.SU, this).execute(cmd);
+	}
+
     protected final boolean isSuGranted() {
         log("isSuGranted: " + suGranted);
         return suGranted;
