@@ -91,7 +91,10 @@ public abstract class BaseService extends TileService implements Callback {
 
         if (needSu && !suGranted && !checkSuGranted()) {
             log("!checkSuGranted()");
-            updateTile((state == State.ACTIVE) ? State.INACTIVATING : State.UNAVAILABLE);
+
+            if (state == State.ACTIVE) updateTile(State.INACTIVATING);
+
+            if (state == State.INACTIVE) updateTile(State.UNAVAILABLE);
         }
     }
 
