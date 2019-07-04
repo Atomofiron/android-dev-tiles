@@ -64,6 +64,7 @@
                 <action android:name="android.service.quicksettings.action.QS_TILE" />
             </intent-filter>
         </service>
+        <!-- does not work properly
         <service
             android:name=".service.DontKeepService"
             android:label="@string/dont_keep_activities"
@@ -72,7 +73,7 @@
             <intent-filter>
                 <action android:name="android.service.quicksettings.action.QS_TILE" />
             </intent-filter>
-        </service>
+        </service>-->
     </application>
 
 </manifest>

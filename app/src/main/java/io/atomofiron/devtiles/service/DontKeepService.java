@@ -3,7 +3,8 @@ package io.atomofiron.devtiles.service;
 import android.annotation.SuppressLint;
 import android.provider.Settings;
 
-@SuppressLint("NewApi")
+/* does not work properly */
+@SuppressLint({"NewApi", "Registered"})
 public class DontKeepService extends SettingsService {
     private static final String NAME = "always_finish_activities";
 
