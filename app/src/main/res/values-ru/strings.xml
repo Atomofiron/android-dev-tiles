@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">Dev Tiles</string>
-    <string name="adb_settings">Настройки ADB</string>
     <string name="error">Ошибка</string>
 
     <string name="show_layout_bounds">Границы элементов</string>
@@ -8,4 +7,10 @@
     <string name="show_touches">Визуальный отклик</string>
     <string name="pointer_location">Отображать касания</string>
     <string name="dont_keep_activities">Не сохранять активности</string>
+    <string name="title_activity_adb_settings">TCP ADB Настройкиs</string>
+
+    <!-- ADB settings -->
+    <string name="pref_title_auto_enable_adb">Автовключение TCP ADB</string>
+    <string name="pref_title_auto_disable_adb">Автовыключение TCP ADB</string>
+    <string name="pref_title_for_aps">Для WiFi точек</string>
 </resources>

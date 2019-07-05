@@ -6,6 +6,8 @@ android {
         applicationId "io.atomofiron.devtiles"
         versionCode 1
         versionName "1.0"
+        minSdkVersion 24
+        targetSdkVersion 28
     }
     buildTypes {
         debug {
@@ -14,21 +16,6 @@ android {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-    }
-
-    flavorDimensions "wtf"
-
-    productFlavors {
-        apk {
-            dimension "wtf"
-            minSdkVersion 22
-            targetSdkVersion 22
-        }
-        market {
-            dimension "wtf"
-            minSdkVersion 24
-            targetSdkVersion 28
         }
     }
 }

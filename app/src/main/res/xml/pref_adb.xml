@@ -1,0 +1,18 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <SwitchPreference
+        android:key="@string/pref_key_auto_enable_adb"
+        android:title="@string/pref_title_auto_enable_adb"
+        />
+    <CheckBoxPreference
+        android:key="@string/pref_key_auto_disable_adb"
+        android:title="@string/pref_title_auto_disable_adb"
+        />
+    <EditTextPreference
+        android:key="@string/pref_key_for_aps"
+        android:title="@string/pref_title_for_aps"
+        android:capitalize="words"
+        android:inputType="textNoSuggestions|textImeMultiLine|textMultiLine"
+        android:selectAllOnFocus="true"
+        />
+</PreferenceScreen>

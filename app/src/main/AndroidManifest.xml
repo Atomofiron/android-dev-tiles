@@ -15,65 +15,59 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:ignore="GoogleAppIndexingWarning">
+        tools:ignore="GoogleAppIndexingWarning"
+        >
         <activity
-            android:name=".AdbTcpActivity"
-            android:icon="@mipmap/ic_adbtcp"
-            android:label="@string/adb_settings"
-            android:roundIcon="@mipmap/ic_adbtcp_round"
+            android:name=".ui.AdbSettingsActivity"
+            android:label="@string/title_activity_adb_settings"
             >
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <service
             android:name=".service.AdbTcpIpService"
-            android:label="@string/adb_over_network"
             android:icon="@drawable/ic_qs_adb_tcpip"
-            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            android:label="@string/adb_over_network"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE"
+            >
             <intent-filter>
                 <action android:name="android.service.quicksettings.action.QS_TILE" />
             </intent-filter>
         </service>
         <service
             android:name=".service.BoundsService"
-            android:label="@string/show_layout_bounds"
             android:icon="@drawable/ic_qs_layout_bounds"
-            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            android:label="@string/show_layout_bounds"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE"
+            >
             <intent-filter>
                 <action android:name="android.service.quicksettings.action.QS_TILE" />
             </intent-filter>
         </service>
         <service
             android:name=".service.TouchesService"
-            android:label="@string/show_touches"
             android:icon="@drawable/ic_qs_pointer_spot_touch"
-            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            android:label="@string/show_touches"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE"
+            >
             <intent-filter>
                 <action android:name="android.service.quicksettings.action.QS_TILE" />
             </intent-filter>
         </service>
         <service
             android:name=".service.PointerService"
-            android:label="@string/pointer_location"
             android:icon="@drawable/ic_qs_pointer_location"
-            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            android:label="@string/pointer_location"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE"
+            >
             <intent-filter>
                 <action android:name="android.service.quicksettings.action.QS_TILE" />
             </intent-filter>
         </service>
-        <!-- does not work properly
-        <service
-            android:name=".service.DontKeepService"
-            android:label="@string/dont_keep_activities"
-            android:icon="@drawable/ic_qs_exit"
-            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
-            <intent-filter>
-                <action android:name="android.service.quicksettings.action.QS_TILE" />
-            </intent-filter>
-        </service>-->
     </application>
 
 </manifest>

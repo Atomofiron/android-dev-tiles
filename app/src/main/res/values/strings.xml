@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">Dev Tiles</string>
-    <string name="adb_settings">ADB Settings</string>
     <string name="error">Error</string>
 
     <string name="show_layout_bounds">Show layout bounds</string>
@@ -8,4 +7,15 @@
     <string name="show_touches">Show taps</string>
     <string name="pointer_location">Pointer location</string>
     <string name="dont_keep_activities">Don’t keep activities</string>
+    <string name="title_activity_adb_settings">TCP ADB Settings</string>
+
+    <!-- ADB settings -->
+    <string translatable="false" name="pref_key_auto_enable_adb">pref_key_auto_enable_adb</string>
+    <string translatable="false" name="pref_key_auto_disable_adb">pref_key_auto_disable_adb</string>
+    <string translatable="false" name="pref_key_for_aps">pref_key_for_aps</string>
+
+    <string name="pref_title_auto_enable_adb">Auto enable TCP ADB</string>
+    <string name="pref_title_auto_disable_adb">Auto disable TCP ADB</string>
+    <string name="pref_title_for_aps">For WiFi APs</string>
+
 </resources>
