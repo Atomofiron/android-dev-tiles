@@ -1,5 +1,9 @@
 package io.atomofiron.devtiles.service;
 
+import android.content.SharedPreferences;
+import android.net.wifi.WifiManager;
+import android.preference.PreferenceManager;
+import android.service.quicksettings.Tile;
 import android.widget.Toast;
 
 import java.util.regex.Matcher;
@@ -21,16 +25,33 @@ public class AdbTcpIpService extends BaseService {
 
     public String port = DEFAULT_PORT;
 
+    private WifiManager wifiManager;
+    private SharedPreferences sp;
+
+    private String currentTrustedAp = null;
+
     {
         needSu = true;
         unavailableIconResId = R.drawable.ic_qs_adb_tcpip_unavailable;
     }
 
     @Override
-    public void onClick(boolean isActive) {
-        String port = isActive ? DISABLE_PORT : this.port;
+    public void onCreate() {
+        super.onCreate();
 
-        updateTile(isActive ? State.INACTIVATING : State.ACTIVATING);
+        wifiManager = (WifiManager) getSystemService(WIFI_SERVICE);
+        sp = PreferenceManager.getDefaultSharedPreferences(this);
+    }
+
+    @Override
+    public void onClick(boolean isActive) {
+        enable(!isActive);
+    }
+
+    private void enable(boolean enable) {
+        String port = enable ? this.port : DISABLE_PORT;
+
+        updateTile(enable ? State.ACTIVATING : State.INACTIVATING);
 
         runAsSu(SU_CHECK, String.format(SET_PROP, port), GET_IP_AND_PROP);
     }
@@ -38,6 +59,8 @@ public class AdbTcpIpService extends BaseService {
     @Override
     protected void onUpdate() {
         run(GET_IP_AND_PROP);
+
+        checkWifi();
     }
 
     @Override
@@ -63,6 +86,30 @@ public class AdbTcpIpService extends BaseService {
         } else {
             //desc updateTile(Tile.STATE_INACTIVE, "");
             updateTile(State.INACTIVE, getString(R.string.adb_over_network));
+        }
+    }
+
+    private void checkWifi() {
+        boolean granted = true; // todo
+
+        if (!granted) return;
+
+        boolean autoEnable = sp.getBoolean(getString(R.string.pref_key_auto_enable_adb), false);
+        boolean autoDisable = sp.getBoolean(getString(R.string.pref_key_auto_disable_adb), false);
+        String aps = sp.getString(getString(R.string.pref_key_for_aps), "");
+        int state = getQsTile().getState();
+
+        String ssid = wifiManager.getConnectionInfo().getSSID();
+        ssid = ssid.substring(1, ssid.length() - 2); // remove ""
+
+        String lastTrustedAp = currentTrustedAp;
+        currentTrustedAp = (aps != null && aps.contains(ssid)) ? ssid : null;
+
+        if (autoEnable && state == Tile.STATE_INACTIVE && currentTrustedAp != null) {
+            enable(true);
+        } else if (autoDisable && state == Tile.STATE_ACTIVE &&
+                lastTrustedAp != null && currentTrustedAp == null) {
+            enable(false);
         }
     }
 }
