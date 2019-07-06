@@ -6,7 +6,6 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
-import android.preference.TwoStatePreference;
 
 import io.atomofiron.devtiles.R;
 
