@@ -39,12 +39,10 @@ public class AdbSettingsActivity extends PreferenceActivity implements Preferenc
             ListPreference listPreference = (ListPreference) preference;
             int index = listPreference.findIndexOfValue(stringValue);
             preference.setSummary(index >= 0 ? listPreference.getEntries()[index] : null);
-        } else if (preference instanceof TwoStatePreference) {
-            if (preference.getKey().equals(getString(R.string.pref_key_auto_enable_adb))) {
-                findPreference(getString(R.string.pref_key_auto_disable_adb)).setEnabled((boolean) value);
-                findPreference(getString(R.string.pref_key_for_aps)).setEnabled((boolean) value);
-            }
-        } else {
+        } else if (preference.getKey().equals(getString(R.string.pref_key_auto_enable_adb))) {
+            findPreference(getString(R.string.pref_key_auto_disable_adb)).setEnabled((boolean) value);
+            findPreference(getString(R.string.pref_key_for_aps)).setEnabled((boolean) value);
+        } else if (preference.getKey().equals(getString(R.string.pref_key_for_aps))) {
             preference.setSummary(stringValue.replace('\n', ' '));
         }
         return true;
