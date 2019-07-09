@@ -18,6 +18,7 @@ import io.atomofiron.devtiles.BuildConfig;
 @TargetApi(Build.VERSION_CODES.M)
 public class Permissions {
     private static final String PACKAGE_SCHEME = "package:";
+    private static final int MAX_REQUEST_CODE = 65536;
 
     private final Activity activity;
     private final Fragment fragment;
@@ -43,7 +44,7 @@ public class Permissions {
     }
 
     private int getNextRequestCode() {
-        return requestCode++ % 65536;
+        return requestCode++ % MAX_REQUEST_CODE;
     }
 
     private Context getContext() {
