@@ -49,13 +49,13 @@ public class AdbTcpIpService extends BaseService {
 
     @Override
     public void onClick(boolean isActive) {
-        enable(!isActive);
+        setState(!isActive);
     }
 
-    private void enable(boolean enable) {
-        String port = enable ? this.port : DISABLE_PORT;
+    private void setState(boolean enabled) {
+        String port = enabled ? this.port : DISABLE_PORT;
 
-        updateTile(enable ? State.ACTIVATING : State.INACTIVATING);
+        updateTile(enabled ? State.ACTIVATING : State.INACTIVATING);
 
         runAsSu(SU_CHECK, String.format(SET_PROP, port), GET_IP_AND_PROP);
     }
@@ -111,10 +111,10 @@ public class AdbTcpIpService extends BaseService {
         sp.edit().putString(KEY_LAST_TRUSTED_AP, currentTrustedAp).apply();
 
         if (autoEnable && state == Tile.STATE_INACTIVE && currentTrustedAp != null) {
-            enable(true);
+            setState(true);
         } else if (autoDisable && state == Tile.STATE_ACTIVE &&
                 lastTrustedAp != null && currentTrustedAp == null) {
-            enable(false);
+            setState(false);
         }
     }
 }
