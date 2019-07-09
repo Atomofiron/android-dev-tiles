@@ -119,7 +119,7 @@ public class AdbSettingsActivity extends PreferenceActivity implements Preferenc
                 .show();
     }
 
-    class PermissionCallbackImpl extends PermissionCallback {
+    private class PermissionCallbackImpl extends PermissionCallback {
         public void onGranted() {
             onAeChecked(true);
         }
