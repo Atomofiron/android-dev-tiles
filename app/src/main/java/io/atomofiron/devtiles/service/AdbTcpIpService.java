@@ -6,6 +6,8 @@ import android.preference.PreferenceManager;
 import android.service.quicksettings.Tile;
 import android.widget.Toast;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,6 +15,8 @@ import io.atomofiron.devtiles.R;
 import io.atomofiron.devtiles.util.Result;
 
 public class AdbTcpIpService extends BaseService {
+    private static final String KEY_LAST_TRUSTED_AP = "KEY_LAST_TRUSTED_AP";
+
     private static final String SET_PROP = "setprop service.adb.tcp.port %s && stop adbd && start adbd";
     private static final String GET_IP_AND_PROP = "ip route show; getprop service.adb.tcp.port";
     private static final String GET_IP_WIFI = "ip route show dev `getprop wifi.interface`";
@@ -27,8 +31,6 @@ public class AdbTcpIpService extends BaseService {
 
     private WifiManager wifiManager;
     private SharedPreferences sp;
-
-    private String currentTrustedAp = null;
 
     {
         needSu = true;
@@ -96,14 +98,15 @@ public class AdbTcpIpService extends BaseService {
 
         boolean autoEnable = sp.getBoolean(getString(R.string.pref_key_auto_enable_adb), false);
         boolean autoDisable = sp.getBoolean(getString(R.string.pref_key_auto_disable_adb), false);
-        String aps = sp.getString(getString(R.string.pref_key_for_aps), "");
+        List<String> aps = Arrays.asList(sp.getString(getString(R.string.pref_key_for_aps), "").split("[\n]+"));
         int state = getQsTile().getState();
 
         String ssid = wifiManager.getConnectionInfo().getSSID();
-        ssid = ssid.substring(1, ssid.length() - 2); // remove ""
+        ssid = ssid.substring(1, ssid.length() - 1); // remove ""
 
-        String lastTrustedAp = currentTrustedAp;
-        currentTrustedAp = (aps != null && aps.contains(ssid)) ? ssid : null;
+        String lastTrustedAp = sp.getString(KEY_LAST_TRUSTED_AP, null);
+        String currentTrustedAp = (aps != null && aps.contains(ssid)) ? ssid : null;
+        sp.edit().putString(KEY_LAST_TRUSTED_AP, currentTrustedAp).apply();
 
         if (autoEnable && state == Tile.STATE_INACTIVE && currentTrustedAp != null) {
             enable(true);
