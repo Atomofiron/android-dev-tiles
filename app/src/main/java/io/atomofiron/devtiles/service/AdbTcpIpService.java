@@ -1,5 +1,6 @@
 package io.atomofiron.devtiles.service;
 
+import android.Manifest;
 import android.content.SharedPreferences;
 import android.net.wifi.WifiManager;
 import android.preference.PreferenceManager;
@@ -13,6 +14,7 @@ import java.util.regex.Pattern;
 
 import io.atomofiron.devtiles.R;
 import io.atomofiron.devtiles.util.Result;
+import io.atomofiron.devtiles.util.permission.Permissions;
 
 public class AdbTcpIpService extends BaseService {
     private static final String KEY_LAST_TRUSTED_AP = "KEY_LAST_TRUSTED_AP";
@@ -92,9 +94,9 @@ public class AdbTcpIpService extends BaseService {
     }
 
     private void checkWifi() {
-        boolean granted = true; // todo
+        boolean granted = Permissions.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION);
 
-        if (!granted) return;
+        if (!granted) return; // todo show notification
 
         boolean autoEnable = sp.getBoolean(getString(R.string.pref_key_auto_enable_adb), false);
         boolean autoDisable = sp.getBoolean(getString(R.string.pref_key_auto_disable_adb), false);

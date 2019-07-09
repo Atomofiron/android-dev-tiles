@@ -17,5 +17,9 @@
     <string name="pref_title_auto_enable_adb">Auto enable TCP ADB</string>
     <string name="pref_title_auto_disable_adb">Auto disable TCP ADB</string>
     <string name="pref_title_for_aps">For WiFi APs</string>
+    <string name="ok">Ok</string>
+    <string name="cancel">Cancel</string>
+    <string name="need_coarse_location">Permission is required!</string>
+    <string name="grant_via_system_settings">Grant permission in system settings</string>
 
 </resources>

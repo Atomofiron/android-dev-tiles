@@ -13,4 +13,8 @@
     <string name="pref_title_auto_enable_adb">Автовключение TCP ADB</string>
     <string name="pref_title_auto_disable_adb">Автовыключение TCP ADB</string>
     <string name="pref_title_for_aps">Для WiFi точек</string>
+    <string name="ok">Oк</string>
+    <string name="cancel">Отмена</string>
+    <string name="need_coarse_location">Разрешение необходимо для получения имени WiFi сети!</string>
+    <string name="grant_via_system_settings">Дайте разрешение в системных настройках</string>
 </resources>
