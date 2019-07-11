@@ -2,6 +2,8 @@ package io.atomofiron.devtiles.ui;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -12,12 +14,14 @@ import android.preference.PreferenceManager;
 import android.preference.TwoStatePreference;
 
 import io.atomofiron.devtiles.R;
+import io.atomofiron.devtiles.service.AdbTcpIpService;
 import io.atomofiron.devtiles.util.permission.PermissionCallback;
 import io.atomofiron.devtiles.util.permission.Permissions;
 
 public class AdbSettingsActivity extends PreferenceActivity implements Preference.OnPreferenceChangeListener {
     private SharedPreferences sp;
     private Permissions permissions = new Permissions(this);
+    private NotificationManager notificationManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +29,7 @@ public class AdbSettingsActivity extends PreferenceActivity implements Preferenc
         addPreferencesFromResource(R.xml.pref_adb);
 
         sp = PreferenceManager.getDefaultSharedPreferences(this);
+        notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         Preference preference = findPreference(getString(R.string.pref_key_for_aps));
         preference.setOnPreferenceChangeListener(this);
@@ -76,6 +81,9 @@ public class AdbSettingsActivity extends PreferenceActivity implements Preferenc
 
         preference = findPreference(getString(R.string.pref_key_for_aps));
         preference.setEnabled(checked);
+
+        if (!checked)
+            notificationManager.cancel(AdbTcpIpService.SETTINGS_NOTIFICATION_ID);
     }
 
     @Override

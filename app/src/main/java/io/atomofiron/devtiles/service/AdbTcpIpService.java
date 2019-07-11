@@ -1,8 +1,15 @@
 package io.atomofiron.devtiles.service;
 
 import android.Manifest;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Icon;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.service.quicksettings.Tile;
 import android.widget.Toast;
@@ -18,6 +25,8 @@ import io.atomofiron.devtiles.util.permission.Permissions;
 
 public class AdbTcpIpService extends BaseService {
     private static final String KEY_LAST_TRUSTED_AP = "KEY_LAST_TRUSTED_AP";
+    private static final int SETTINGS_REQUEST_CODE = 2345;
+    public static final int SETTINGS_NOTIFICATION_ID = 2345;
 
     private static final String SET_PROP = "setprop service.adb.tcp.port %s && stop adbd && start adbd";
     private static final String GET_IP_AND_PROP = "ip route show; getprop service.adb.tcp.port";
@@ -94,11 +103,22 @@ public class AdbTcpIpService extends BaseService {
     }
 
     private void checkWifi() {
+        boolean autoEnable = sp.getBoolean(getString(R.string.pref_key_auto_enable_adb), false);
+        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        if (!autoEnable) {
+            manager.cancel(SETTINGS_NOTIFICATION_ID);
+            return;
+        }
+
         boolean granted = Permissions.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION);
 
-        if (!granted) return; // todo show notification
+        if (!granted) {
+            showPermissionNotification(manager);
+            return;
+        }
+        manager.cancel(SETTINGS_NOTIFICATION_ID);
 
-        boolean autoEnable = sp.getBoolean(getString(R.string.pref_key_auto_enable_adb), false);
         boolean autoDisable = sp.getBoolean(getString(R.string.pref_key_auto_disable_adb), false);
         List<String> aps = Arrays.asList(sp.getString(getString(R.string.pref_key_for_aps), "").split("[\n]+"));
         int state = getQsTile().getState();
@@ -110,11 +130,47 @@ public class AdbTcpIpService extends BaseService {
         String currentTrustedAp = (aps != null && aps.contains(ssid)) ? ssid : null;
         sp.edit().putString(KEY_LAST_TRUSTED_AP, currentTrustedAp).apply();
 
-        if (autoEnable && state == Tile.STATE_INACTIVE && currentTrustedAp != null) {
+        // autoEnable == true
+        if (state == Tile.STATE_INACTIVE && currentTrustedAp != null) {
             setState(true);
         } else if (autoDisable && state == Tile.STATE_ACTIVE &&
                 lastTrustedAp != null && currentTrustedAp == null) {
             setState(false);
+        }
+    }
+
+    private void showPermissionNotification(NotificationManager manager) {
+        Notification.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+            builder = new Notification.Builder(this, getString(R.string.permission_channel_id));
+        else
+            builder = new Notification.Builder(this);
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(
+                this,
+                SETTINGS_REQUEST_CODE,
+                Permissions.getPermissionsSettingsIntent(),
+                PendingIntent.FLAG_CANCEL_CURRENT
+        );
+        builder.setAutoCancel(true);
+        builder.setContentIntent(pendingIntent);
+        builder.setContentTitle(getString(R.string.need_coarse_location));
+        builder.setSmallIcon(Icon.createWithResource(this, R.drawable.ic_adbtcp_small));
+        Notification notification = builder.build();
+
+        createChannelIfNeeded(manager);
+        manager.notify(SETTINGS_NOTIFICATION_ID, notification);
+    }
+
+    private void createChannelIfNeeded(NotificationManager manager) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            String channelId = getString(R.string.permission_channel_id);
+            NotificationChannel channel = manager.getNotificationChannel(channelId);
+            if (channel == null) {
+                String channelName = getString(R.string.permission_channel_name);
+                channel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_LOW);
+                manager.createNotificationChannel(channel);
+            }
         }
     }
 }
