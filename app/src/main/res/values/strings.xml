@@ -18,14 +18,12 @@
     <string translatable="false" name="pref_key_for_aps">pref_key_for_aps</string>
     <string translatable="false" name="pref_key_tip">pref_key_tip</string>
 
-    <string name="pref_title_auto_enable_adb">Auto enable TCP ADB</string>
-    <string name="pref_title_auto_disable_adb">Auto disable TCP ADB</string>
-    <string name="pref_title_for_aps">For WiFi APs</string>
-    <string name="ok">Ok</string>
+    <string name="pref_title_auto_enable_adb">Auto-enable TCP ADB</string>
+    <string name="pref_title_auto_disable_adb">Auto-disable TCP ADB</string>
+    <string name="pref_title_for_aps">For WiFi access points</string>
+    <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
-    <string name="need_coarse_location">Permission is required!</string>
-    <string name="grant_via_system_settings">Grant permission in system settings</string>
-    <!-- todo translate -->
-    <string name="open_needed">Для автопереключения необходимо добавить тайл и открыть шторку!</string>
-
+    <string name="need_coarse_location">This feature works only with permission!</string>
+    <string name="grant_via_system_settings">Please, give required permission in system settings</string>
+    <string name="open_needed">For auto-switch add a tile and open the notification curtain </string>
 </resources>
