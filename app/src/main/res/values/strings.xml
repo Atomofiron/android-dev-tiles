@@ -16,7 +16,6 @@
     <string translatable="false" name="pref_key_auto_enable_adb">pref_key_auto_enable_adb</string>
     <string translatable="false" name="pref_key_auto_disable_adb">pref_key_auto_disable_adb</string>
     <string translatable="false" name="pref_key_for_aps">pref_key_for_aps</string>
-    <string translatable="false" name="pref_key_tip">pref_key_tip</string>
 
     <string name="pref_title_auto_enable_adb">Auto-enable TCP ADB</string>
     <string name="pref_title_auto_disable_adb">Auto-disable TCP ADB</string>
