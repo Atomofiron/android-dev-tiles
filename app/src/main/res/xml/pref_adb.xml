@@ -15,4 +15,5 @@
         android:inputType="textNoSuggestions|textImeMultiLine|textMultiLine"
         android:selectAllOnFocus="true"
         />
+    <PreferenceCategory android:title="@string/open_needed" />
 </PreferenceScreen>

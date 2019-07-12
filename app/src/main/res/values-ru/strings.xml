@@ -17,4 +17,5 @@
     <string name="cancel">Отмена</string>
     <string name="need_coarse_location">Разрешение необходимо для получения имени WiFi сети!</string>
     <string name="grant_via_system_settings">Дайте разрешение в системных настройках</string>
+    <string name="open_needed">Для автопереключения необходимо добавить тайл и открыть шторку!</string>
 </resources>
