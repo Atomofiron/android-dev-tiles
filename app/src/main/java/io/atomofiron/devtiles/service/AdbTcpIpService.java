@@ -25,6 +25,7 @@ import io.atomofiron.devtiles.util.permission.Permissions;
 
 public class AdbTcpIpService extends BaseService {
     private static final String KEY_LAST_TRUSTED_AP = "KEY_LAST_TRUSTED_AP";
+    private static final String KEY_TURNED_OFF = "KEY_TURNED_OFF";
     private static final int SETTINGS_REQUEST_CODE = 2345;
     public static final int SETTINGS_NOTIFICATION_ID = 2345;
 
@@ -65,6 +66,7 @@ public class AdbTcpIpService extends BaseService {
         String port = enabled ? this.port : DISABLE_PORT;
 
         updateTile(enabled ? State.ACTIVATING : State.INACTIVATING);
+        sp.edit().putBoolean(KEY_TURNED_OFF, !enabled).apply();
 
         runAsSu(SU_CHECK, String.format(SET_PROP, port), GET_IP_AND_PROP);
     }
@@ -81,7 +83,7 @@ public class AdbTcpIpService extends BaseService {
         super.onResult(result);
 
         if (!result.success || result.message == null) {
-            updateTile(State.INACTIVE);
+            //updateTile(State.INACTIVE);
 
             String message = (result.message == null) ? getString(R.string.error) : result.message;
             Toast.makeText(this, message, Toast.LENGTH_LONG).show();
@@ -104,6 +106,7 @@ public class AdbTcpIpService extends BaseService {
 
     private void checkWifi() {
         boolean autoEnable = sp.getBoolean(getString(R.string.pref_key_auto_enable_adb), false);
+        String lastTrustedAp = sp.getString(KEY_LAST_TRUSTED_AP, null);
         NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         if (!autoEnable) {
@@ -120,22 +123,24 @@ public class AdbTcpIpService extends BaseService {
         manager.cancel(SETTINGS_NOTIFICATION_ID);
 
         boolean autoDisable = sp.getBoolean(getString(R.string.pref_key_auto_disable_adb), false);
+        boolean turnedOff = sp.getBoolean(KEY_TURNED_OFF, false);
         List<String> aps = Arrays.asList(sp.getString(getString(R.string.pref_key_for_aps), "").split("[\n]+"));
         int state = getQsTile().getState();
 
         String ssid = wifiManager.getConnectionInfo().getSSID();
         ssid = ssid.substring(1, ssid.length() - 1); // remove ""
 
-        String lastTrustedAp = sp.getString(KEY_LAST_TRUSTED_AP, null);
         String currentTrustedAp = (aps != null && aps.contains(ssid)) ? ssid : null;
         sp.edit().putString(KEY_LAST_TRUSTED_AP, currentTrustedAp).apply();
 
         // autoEnable == true
-        if (state == Tile.STATE_INACTIVE && currentTrustedAp != null) {
+        if (state == Tile.STATE_INACTIVE && currentTrustedAp != null && !turnedOff) {
             setState(true);
-        } else if (autoDisable && state == Tile.STATE_ACTIVE &&
-                lastTrustedAp != null && currentTrustedAp == null) {
-            setState(false);
+        } else if (autoDisable && lastTrustedAp != null && currentTrustedAp == null) {
+            if (state == Tile.STATE_ACTIVE)
+                setState(false);
+
+            sp.edit().remove(KEY_TURNED_OFF).apply();
         }
     }
 
