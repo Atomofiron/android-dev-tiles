@@ -41,8 +41,8 @@ public abstract class BaseService extends TileService implements Callback {
     private State state = null;
 
     protected boolean needSu = false;
-    protected int unavailableIconResId = UNDEFINED;
-    protected int defaultIconResId = UNDEFINED;
+    private int unavailableIconResId = UNDEFINED;
+    private int defaultIconResId = UNDEFINED;
 
     @Override
     public void onCreate() {
@@ -53,11 +53,15 @@ public abstract class BaseService extends TileService implements Callback {
         suGranted = sp.getBoolean(KEY_SU_GRANTED, false);
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-
-        sp.edit().putBoolean(KEY_SU_GRANTED, suGranted).apply();
+    protected void setIcons(int defaultIconResId, int unavailableIconResId) {
+        if (defaultIconResId == UNDEFINED) {
+            throw new IllegalArgumentException("defaultIconResId == -1");
+        }
+        if (unavailableIconResId == UNDEFINED) {
+            throw new IllegalArgumentException("unavailableIconResId == -1");
+        }
+        this.defaultIconResId = defaultIconResId;
+        this.unavailableIconResId = unavailableIconResId;
     }
 
     @Override
@@ -79,11 +83,6 @@ public abstract class BaseService extends TileService implements Callback {
 
         if (state == null) {
             state = (getQsTile().getState() == Tile.STATE_ACTIVE) ? State.ACTIVE : State.INACTIVE;
-        }
-
-        int iconResId = getQsTile().getIcon().getResId();
-        if (defaultIconResId == UNDEFINED && iconResId != unavailableIconResId) {
-            defaultIconResId = iconResId;
         }
 
         log("onUpdate");
@@ -113,10 +112,10 @@ public abstract class BaseService extends TileService implements Callback {
     public void onResult(Result result) {
         log("onResult: " + result.success);
 
-        if (needSu && result.message != null) {
-            if (result.message.startsWith(IS_SU))
+        if (needSu && result.output != null) {
+            if (result.output.startsWith(IS_SU))
                 suGranted = true;
-            else if (result.message.startsWith(NO_SU))
+            else if (result.output.startsWith(NO_SU))
                 suGranted = false;
         }
     }
@@ -137,6 +136,7 @@ public abstract class BaseService extends TileService implements Callback {
     protected final boolean checkSuGranted() {
         suGranted = Cmd.run(Cmd.SU);
         log("checkSuGranted: " + suGranted);
+        sp.edit().putBoolean(KEY_SU_GRANTED, suGranted).apply();
         return suGranted;
     }
 
@@ -154,8 +154,9 @@ public abstract class BaseService extends TileService implements Callback {
         Tile tile = getQsTile();
         int iconResId = (state == State.INACTIVATING) ? unavailableIconResId : defaultIconResId;
 
-        if (tile.getIcon().getResId() != iconResId)
+        if (iconResId != UNDEFINED && tile.getIcon().getResId() != iconResId) {
             tile.setIcon(Icon.createWithResource(getBaseContext(), iconResId));
+        }
         //desc tile.setContentDescription(description);
         tile.setState(state.state);
         tile.setLabel(description);
@@ -168,6 +169,6 @@ public abstract class BaseService extends TileService implements Callback {
 
     protected final void log(String s) {
         if (I.LOGGING)
-            I.log(getName() + "." + s);
+            I.log("[" + getName() + "]: " + s);
     }
 }

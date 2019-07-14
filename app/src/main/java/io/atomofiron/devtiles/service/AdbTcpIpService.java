@@ -29,7 +29,7 @@ public class AdbTcpIpService extends BaseService {
     private static final int SETTINGS_REQUEST_CODE = 2345;
     public static final int SETTINGS_NOTIFICATION_ID = 2345;
 
-    private static final String SET_PROP = "setprop service.adb.tcp.port %s && stop adbd && start adbd";
+    private static final String SET_PROP = "su -c \"setprop service.adb.tcp.port %s && stop adbd && start adbd\"";
     private static final String GET_IP_AND_PROP = "ip route show; getprop service.adb.tcp.port";
     private static final String GET_IP_WIFI = "ip route show dev `getprop wifi.interface`";
 
@@ -46,7 +46,7 @@ public class AdbTcpIpService extends BaseService {
 
     {
         needSu = true;
-        unavailableIconResId = R.drawable.ic_qs_adb_tcpip_unavailable;
+        setIcons(R.drawable.ic_qs_adb_tcpip, R.drawable.ic_qs_adb_tcpip_unavailable);
     }
 
     @Override
@@ -68,7 +68,7 @@ public class AdbTcpIpService extends BaseService {
         updateTile(enabled ? State.ACTIVATING : State.INACTIVATING);
         sp.edit().putBoolean(KEY_TURNED_OFF, !enabled).apply();
 
-        runAsSu(SU_CHECK, String.format(SET_PROP, port), GET_IP_AND_PROP);
+        run(SU_CHECK, String.format(SET_PROP, port), GET_IP_AND_PROP);
     }
 
     @Override
@@ -82,26 +82,24 @@ public class AdbTcpIpService extends BaseService {
     public void onResult(Result result) {
         super.onResult(result);
 
-        if (!result.success || result.message == null) {
-            //updateTile(State.INACTIVE);
-
-            String message = (result.message == null) ? getString(R.string.error) : result.message;
+        if (!result.success) {
+            String message = (result.error == null) ? getString(R.string.error) : result.error;
             Toast.makeText(this, message, Toast.LENGTH_LONG).show();
-            return;
         }
 
         String ip = LOCALHOST;
-        Matcher matcher = ipPattern.matcher(result.message);
+        Matcher matcher = ipPattern.matcher(result.output);
         while (matcher.find()) {
             ip = matcher.group();
         }
 
-        if (result.message.endsWith(port)) {
+        if (result.output.endsWith(port)) {
             updateTile(isSuGranted() ? State.ACTIVE : State.INACTIVATING, ip + ":" + port);
-        } else {
+        } else if (result.output.endsWith(DISABLE_PORT)) {
             //desc updateTile(Tile.STATE_INACTIVE, "");
             updateTile(State.INACTIVE, getString(R.string.adb_over_network));
-        }
+        } else
+            run(GET_IP_AND_PROP);
     }
 
     private void checkWifi() {

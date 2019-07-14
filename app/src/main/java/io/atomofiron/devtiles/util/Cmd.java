@@ -54,11 +54,11 @@ public class Cmd {
             log("success: " + success);
 
             String input = readStream(process.getInputStream());
-            log("input:\n" + input);
+            log("output:\n" + input);
             String error = readStream(process.getErrorStream());
             log("error:\n" + error);
 
-            return new Result(success, success ? input : error);
+            return new Result(success, input,  error);
         } catch (Exception exception) {
             log("exc: " + exception.toString());
             return new Result(exception.toString());
@@ -80,6 +80,6 @@ public class Cmd {
 
     private static void log(String s) {
         if (I.LOGGING)
-            I.log("Cmd." + s);
+            I.log("[Cmd] " + s);
     }
 }

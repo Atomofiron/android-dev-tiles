@@ -6,7 +6,8 @@ import io.atomofiron.devtiles.util.Result;
 public class BoundsService extends PropertiesService {
 
     {
-        unavailableIconResId = R.drawable.ic_qs_layout_bounds_unavailable;
+        needSu = true;
+        setIcons(R.drawable.ic_qs_layout_bounds, R.drawable.ic_qs_layout_bounds_unavailable);
     }
 
     @Override
@@ -33,9 +34,9 @@ public class BoundsService extends PropertiesService {
     public void onResult(Result result) {
         super.onResult(result);
 
-        if (!result.success || result.message == null) {
+        if (!result.success || result.output == null) {
             updateTile(State.INACTIVE);
-        } else if (result.message.endsWith(TRUE)) {
+        } else if (result.output.endsWith(TRUE)) {
             updateTile(State.ACTIVE);
         } else {
             updateTile(State.INACTIVE);
