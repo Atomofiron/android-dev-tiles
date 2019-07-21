@@ -12,7 +12,6 @@ import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.service.quicksettings.Tile;
-import android.widget.Toast;
 
 import java.util.Arrays;
 import java.util.List;
@@ -68,7 +67,7 @@ public class AdbTcpIpService extends BaseService {
         updateTile(enabled ? State.ACTIVATING : State.INACTIVATING);
         sp.edit().putBoolean(KEY_TURNED_OFF, !enabled).apply();
 
-        run(SU_CHECK, String.format(SET_PROP, port), GET_IP_AND_PROP);
+        runWithSu(String.format(SET_PROP, port), GET_IP_AND_PROP);
     }
 
     @Override
@@ -81,11 +80,6 @@ public class AdbTcpIpService extends BaseService {
     @Override
     public void onResult(Result result) {
         super.onResult(result);
-
-        if (!result.success) {
-            String message = (result.error == null) ? getString(R.string.error) : result.error;
-            Toast.makeText(this, message, Toast.LENGTH_LONG).show();
-        }
 
         if (result.output == null) {
             log("onResult: WTF result.output == null");

@@ -6,7 +6,9 @@ import android.graphics.drawable.Icon;
 import android.preference.PreferenceManager;
 import android.service.quicksettings.Tile;
 import android.service.quicksettings.TileService;
+import android.widget.Toast;
 
+import io.atomofiron.devtiles.R;
 import io.atomofiron.devtiles.util.AsyncRuntime;
 import io.atomofiron.devtiles.util.Callback;
 import io.atomofiron.devtiles.I;
@@ -114,6 +116,11 @@ public abstract class BaseService extends TileService implements Callback {
     public void onResult(Result result) {
         log("onResult: success = " + result.success);
 
+        if (!result.success) {
+            String message = (result.error == null) ? getString(R.string.error) : result.error;
+            Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+        }
+
         if (needSu && result.output != null) {
             if (result.output.startsWith(IS_SU))
                 suGranted = true;
@@ -128,6 +135,13 @@ public abstract class BaseService extends TileService implements Callback {
 
     protected final void run(String... cmd) {
         new AsyncRuntime(this).execute(cmd);
+    }
+
+    protected final void runWithSu(String... cmd) {
+        String[] arr = new String[cmd.length + 1];
+        arr[0] = SU_CHECK;
+        System.arraycopy(cmd, 0, arr, 1, cmd.length);
+        new AsyncRuntime(this).execute(arr);
     }
 
     protected final boolean isSuGranted() {

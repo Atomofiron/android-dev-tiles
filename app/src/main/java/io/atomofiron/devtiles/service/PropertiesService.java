@@ -42,7 +42,7 @@ public abstract class PropertiesService extends BaseService {
 
             updateTile(isActive ? State.INACTIVATING : State.ACTIVATING);
 
-            run(SU_CHECK, String.format(SET_PROP, value, getSetterCommandSuffix()), GET_PROP);
+            runWithSu(String.format(SET_PROP, value, getSetterCommandSuffix()), GET_PROP);
         }
     }
 

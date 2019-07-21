@@ -4,7 +4,7 @@ import android.annotation.SuppressLint;
 import android.net.Uri;
 import android.provider.Settings;
 
-import io.atomofiron.devtiles.util.Cmd;
+import io.atomofiron.devtiles.util.Result;
 
 @SuppressLint("DefaultLocale")
 public abstract class SettingsService extends BaseService {
@@ -19,7 +19,16 @@ public abstract class SettingsService extends BaseService {
     protected Uri uri = null;
     protected String name = null;
 
+    private void assertFields() {
+        if (uri == null)
+            throw new NullPointerException("SettingsService.uri == null!");
+
+        if (name == null)
+            throw new NullPointerException("SettingsService.name == null!");
+    }
+
     private int get() {
+        assertFields();
         String uri = this.uri.toString();
 
         if (uri.endsWith(SYSTEM))
@@ -29,10 +38,11 @@ public abstract class SettingsService extends BaseService {
         else if (uri.endsWith(GLOBAL))
             return Settings.Global.getInt(getContentResolver(), name, DISABLE);
         else
-            return DISABLE;
+            throw new IllegalArgumentException("uri = " + uri);
     }
 
     private boolean set(int value) {
+        assertFields();
         String uri = this.uri.toString();
 
         if (uri.endsWith(SYSTEM))
@@ -42,46 +52,42 @@ public abstract class SettingsService extends BaseService {
         else if (uri.endsWith(GLOBAL))
             return Settings.Global.putInt(getContentResolver(), name, value);
         else
-            return false;
+            throw new IllegalArgumentException("uri = " + uri);
     }
 
     @Override
     public final void onClick(boolean isActive) {
-        boolean success = false;
         int value = isActive ? DISABLE : ENABLE;
 
         try {
-            success = set(value);
-
             needSu = false;
+
+            if (set(value))
+                updateTile(!isActive);
         } catch (SecurityException e) {
-            log("exc: " + e.toString());
+            log("onClick: exc = " + e.toString());
 
             needSu = true;
 
-            success = Cmd.run(String.format(CONTENT_TEMPLATE, uri, name, value));
-        } catch (Exception e) {
-            log("exc: " + e.toString());
+            runWithSu(String.format(CONTENT_TEMPLATE, uri, name, value));
         }
-        log("success: " + success);
-
-        if (success) updateTile(!isActive);
     }
 
     @Override
     public final void onUpdate() {
-        if (uri == null)
-            throw new NullPointerException("SettingsService.uri == null!");
-
-        if (name == null)
-            throw new NullPointerException("SettingsService.name == null!");
-
         try {
             int state = get();
             updateTile(state == ENABLE);
-            log("state: " + state);
+            log("onUpdate: state = " + state);
         } catch (Exception e) {
-            log("exc: " + e.toString());
+            log("onUpdate: exc = " + e.toString());
         }
+    }
+
+    @Override
+    public void onResult(Result result) {
+        super.onResult(result);
+
+        onUpdate();
     }
 }

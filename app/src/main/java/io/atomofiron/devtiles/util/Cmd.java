@@ -12,6 +12,7 @@ public class Cmd {
     public static final int SUCCESS_CODE = 0;
 
     public static boolean run(String cmd) {
+        log("run: [ " + cmd + " ]");
         try {
             log("exec()");
             Process process = Runtime.getRuntime().exec(cmd);
