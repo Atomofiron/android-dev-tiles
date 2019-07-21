@@ -21,8 +21,8 @@ public class BoundsService extends PropertiesService {
     }
 
     @Override
-    protected String getValueForState(boolean activate) {
-        return activate ? TRUE : FALSE;
+    protected String getValueForState(boolean active) {
+        return active ? TRUE : FALSE;
     }
 
     @Override
@@ -34,12 +34,22 @@ public class BoundsService extends PropertiesService {
     public void onResult(Result result) {
         super.onResult(result);
 
-        if (!result.success || result.output == null) {
+        if (result.output == null) {
+            // unreachable
             updateTile(State.INACTIVE);
         } else if (result.output.endsWith(TRUE)) {
-            updateTile(State.ACTIVE);
+            if (needSu && !isSuGranted())
+                updateTile(State.INACTIVATING);
+            else
+                updateTile(State.ACTIVE);
+        } else if (result.output.endsWith(FALSE)) {
+            if (needSu && !isSuGranted())
+                updateTile(State.UNAVAILABLE);
+            else
+                updateTile(State.INACTIVE);
         } else {
-            updateTile(State.INACTIVE);
+            log("onResult: WTF not true not false");
+            updateTile(State.UNAVAILABLE);
         }
     }
 }

@@ -93,13 +93,32 @@ public class AdbTcpIpService extends BaseService {
             ip = matcher.group();
         }
 
-        if (result.output.endsWith(port)) {
-            updateTile(isSuGranted() ? State.ACTIVE : State.INACTIVATING, ip + ":" + port);
-        } else if (result.output.endsWith(DISABLE_PORT)) {
-            //desc updateTile(Tile.STATE_INACTIVE, "");
-            updateTile(State.INACTIVE, getString(R.string.adb_over_network));
-        } else
-            run(GET_IP_AND_PROP);
+        if (result.output == null) {
+            log("onResult: WTF result.output == null");
+            updateTile(State.INACTIVE);
+        } else {
+            int[] resultPort = new int[1];
+            int length = result.output.length();
+            String stringPort = result.output.substring(result.output.lastIndexOf('\n') + 1, length);
+            log("onResult: stringPort = " + stringPort);
+            boolean parsed = parsePort(stringPort, resultPort);
+            int port = resultPort[0];
+            if (parsed && port > 0) {
+                updateTile(isSuGranted() ? State.ACTIVE : State.INACTIVATING, ip + ":" + port);
+            } else {
+                //desc updateTile(Tile.STATE_INACTIVE, "");
+                updateTile(isSuGranted() ? State.INACTIVE : State.UNAVAILABLE, getString(R.string.adb_over_network));
+            }
+        }
+    }
+
+    private boolean parsePort(String port, int[] parsedPort) {
+        try {
+            parsedPort[0] = Integer.parseInt(port);
+            return true;
+        } catch (Exception ignored) {
+            return false;
+        }
     }
 
     private void checkWifi() {

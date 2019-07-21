@@ -31,7 +31,8 @@ public abstract class BaseService extends TileService implements Callback {
 
     private static final String IS_SU = "IS_SU";
     private static final String NO_SU = "NO_SU";
-    protected static final String SU_CHECK = "su -c echo " + IS_SU + " || echo " + NO_SU;
+    // todo попробовать заменить на waitFor()
+    protected static final String SU_CHECK = "su -c echo " + IS_SU + " 2>/dev/null || echo " + NO_SU;
     private static final int UNDEFINED = -1;
 
     private SharedPreferences sp;
@@ -67,8 +68,10 @@ public abstract class BaseService extends TileService implements Callback {
     @Override
     public final void onClick() {
         log("onClick");
-        if (state != State.ACTIVE & state != State.INACTIVE) return;
-        if (needSu && !isSuGranted()) return;
+        /* state должет быть уже инициализирован в onUpdate()
+         */
+        if (state != State.ACTIVE && state != State.INACTIVE) return;
+        if (needSu && !suGranted) return;
 
         onClick(state == State.ACTIVE);
     }
@@ -81,24 +84,23 @@ public abstract class BaseService extends TileService implements Callback {
     public final void onStartListening() {
         log("onStartListening()");
 
-        if (state == null) {
-            state = (getQsTile().getState() == Tile.STATE_ACTIVE) ? State.ACTIVE : State.INACTIVE;
-        }
-
         log("onUpdate");
         onUpdate();
 
         if (needSu && !suGranted && !checkSuGranted()) {
             log("!checkSuGranted()");
 
-            if (state == State.ACTIVE) updateTile(State.INACTIVATING);
+            if (state == State.ACTIVE)
+                updateTile(State.INACTIVATING);
 
-            if (state == State.INACTIVE) updateTile(State.UNAVAILABLE);
+            if (state == State.INACTIVE)
+                updateTile(State.UNAVAILABLE);
         }
     }
 
     @Override
     public final void onStopListening() {
+        log("onStopListening()");
     }
 
     @Override
@@ -117,16 +119,16 @@ public abstract class BaseService extends TileService implements Callback {
                 suGranted = true;
             else if (result.output.startsWith(NO_SU))
                 suGranted = false;
+        } else if (needSu) {
+            // unreachable
+            suGranted = false;
+            log("onResult: WTF needSu && result.output == null");
         }
     }
 
     protected final void run(String... cmd) {
         new AsyncRuntime(this).execute(cmd);
     }
-
-	protected final void runAsSu(String... cmd) {
-		new AsyncRuntime(Cmd.SU, this).execute(cmd);
-	}
 
     protected final boolean isSuGranted() {
         log("isSuGranted: " + suGranted);

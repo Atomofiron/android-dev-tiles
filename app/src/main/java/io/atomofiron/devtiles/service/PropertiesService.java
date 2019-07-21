@@ -12,7 +12,7 @@ public abstract class PropertiesService extends BaseService {
 
     {
         PROP = getProp();
-        SET_PROP = "su -c setprop " + PROP + " %s %s";
+        SET_PROP = "su -c \"setprop " + PROP + " %s\" %s";
         GET_PROP = "getprop " + PROP;
     }
 
@@ -22,8 +22,9 @@ public abstract class PropertiesService extends BaseService {
         return "";
     }
 
-    protected abstract String getValueForState(boolean activate);
+    protected abstract String getValueForState(boolean active);
 
+    // на случай, если резальтат не boolean
     protected abstract boolean getStateForValue(String value);
 
     @Override
@@ -41,7 +42,7 @@ public abstract class PropertiesService extends BaseService {
 
             updateTile(isActive ? State.INACTIVATING : State.ACTIVATING);
 
-            run(String.format(SET_PROP, value, getSetterCommandSuffix()), GET_PROP);
+            run(SU_CHECK, String.format(SET_PROP, value, getSetterCommandSuffix()), GET_PROP);
         }
     }
 
