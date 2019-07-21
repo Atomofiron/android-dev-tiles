@@ -1,6 +1,7 @@
 package io.atomofiron.devtiles.service;
 
 import android.annotation.SuppressLint;
+import android.net.Uri;
 import android.provider.Settings;
 
 /* does not work properly */
@@ -8,8 +9,13 @@ import android.provider.Settings;
 public class DontKeepService extends SettingsService {
     private static final String NAME = "always_finish_activities";
 
-    {
-        uri = Settings.Global.CONTENT_URI;
-        name = NAME;
+    @Override
+    protected Uri getUri() {
+        return Settings.Global.CONTENT_URI;
+    }
+
+    @Override
+    protected String getName() {
+        return NAME;
     }
 }

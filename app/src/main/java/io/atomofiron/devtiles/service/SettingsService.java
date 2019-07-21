@@ -16,8 +16,12 @@ public abstract class SettingsService extends BaseService {
     private static final String SECURE = "secure";
     private static final String GLOBAL = "global";
 
-    protected Uri uri = null;
-    protected String name = null;
+    private final Uri uri = getUri();
+    private final String name = getName();
+
+    protected abstract Uri getUri();
+
+    protected abstract String getName();
 
     private void assertFields() {
         if (uri == null)
