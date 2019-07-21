@@ -112,7 +112,7 @@ public abstract class BaseService extends TileService implements Callback {
     }
 
     public void onResult(Result result) {
-        log("onResult: " + result.success);
+        log("onResult: success = " + result.success);
 
         if (needSu && result.output != null) {
             if (result.output.startsWith(IS_SU))

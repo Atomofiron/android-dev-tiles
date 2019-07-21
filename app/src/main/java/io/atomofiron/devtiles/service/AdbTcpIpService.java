@@ -87,37 +87,40 @@ public class AdbTcpIpService extends BaseService {
             Toast.makeText(this, message, Toast.LENGTH_LONG).show();
         }
 
-        String ip = LOCALHOST;
-        Matcher matcher = ipPattern.matcher(result.output);
-        while (matcher.find()) {
-            ip = matcher.group();
-        }
-
         if (result.output == null) {
             log("onResult: WTF result.output == null");
             updateTile(State.INACTIVE);
         } else {
-            int[] resultPort = new int[1];
-            int length = result.output.length();
-            String stringPort = result.output.substring(result.output.lastIndexOf('\n') + 1, length);
-            log("onResult: stringPort = " + stringPort);
-            boolean parsed = parsePort(stringPort, resultPort);
-            int port = resultPort[0];
-            if (parsed && port > 0) {
+            int port = parsePort(result.output);
+            if (port > 0) {
+                String ip = parseIp(result.output);
+
                 updateTile(isSuGranted() ? State.ACTIVE : State.INACTIVATING, ip + ":" + port);
             } else {
-                //desc updateTile(Tile.STATE_INACTIVE, "");
                 updateTile(isSuGranted() ? State.INACTIVE : State.UNAVAILABLE, getString(R.string.adb_over_network));
             }
         }
     }
 
-    private boolean parsePort(String port, int[] parsedPort) {
+    private String parseIp(String output) {
+        String ip = LOCALHOST;
+        Matcher matcher = ipPattern.matcher(output);
+        while (matcher.find()) {
+            ip = matcher.group();
+            log("parseIp: ip = " + ip);
+        }
+        return ip;
+    }
+
+    private int parsePort(String output) {
         try {
-            parsedPort[0] = Integer.parseInt(port);
-            return true;
+            int start = output.lastIndexOf('\n') + 1;
+            int length = output.length();
+            String stringPort = output.substring(start, length);
+            log("parsePort: stringPort = " + stringPort);
+            return Integer.parseInt(stringPort);
         } catch (Exception ignored) {
-            return false;
+            return -1;
         }
     }
 
