@@ -8,11 +8,12 @@ import android.service.quicksettings.Tile;
 import android.service.quicksettings.TileService;
 import android.widget.Toast;
 
+import io.atomofiron.devtiles.BuildConfig;
 import io.atomofiron.devtiles.R;
 import io.atomofiron.devtiles.util.AsyncRuntime;
 import io.atomofiron.devtiles.util.Callback;
-import io.atomofiron.devtiles.I;
 import io.atomofiron.devtiles.util.Cmd;
+import io.atomofiron.devtiles.util.L;
 import io.atomofiron.devtiles.util.Result;
 
 @SuppressLint("NewApi")
@@ -38,7 +39,7 @@ public abstract class BaseService extends TileService implements Callback {
     private static final int UNDEFINED = -1;
 
     private SharedPreferences sp;
-    private final String KEY_SU_GRANTED = "KEY_SU_GRANTED_FOR_" + getName().toUpperCase();
+    private final String KEY_SU_GRANTED = "KEY_SU_GRANTED_FOR_" + getClass().getSimpleName().toUpperCase();
 
     private boolean suGranted = false;
     private State state = null;
@@ -179,12 +180,8 @@ public abstract class BaseService extends TileService implements Callback {
         tile.updateTile();
     }
 
-    private String getName() {
-        return getClass().getSimpleName();
-    }
-
     protected final void log(String s) {
-        if (I.LOGGING)
-            I.log("[" + getName() + "]: " + s);
+        if (BuildConfig.DEBUG)
+            L.log(this, s);
     }
 }

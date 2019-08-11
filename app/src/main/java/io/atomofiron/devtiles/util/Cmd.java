@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import io.atomofiron.devtiles.I;
+import io.atomofiron.devtiles.BuildConfig;
 
 public class Cmd {
     public static final String SHELL = "sh";
@@ -80,7 +80,7 @@ public class Cmd {
     }
 
     private static void log(String s) {
-        if (I.LOGGING)
-            I.log("[Cmd] " + s);
+        if (BuildConfig.DEBUG)
+            L.log("Cmd", s);
     }
 }
