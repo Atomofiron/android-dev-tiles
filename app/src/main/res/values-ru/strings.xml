@@ -7,7 +7,7 @@
     <string name="show_touches">Визуальный отклик</string>
     <string name="pointer_location">Отображать касания</string>
     <string name="dont_keep_activities">Не сохранять активности</string>
-    <string name="title_activity_adb_settings">TCP ADB Настройкиs</string>
+    <string name="title_activity_adb_settings">WiFi ADB Настройки</string>
 
     <!-- ADB settings -->
     <string name="pref_title_auto_enable_adb">Автовключение TCP ADB</string>
