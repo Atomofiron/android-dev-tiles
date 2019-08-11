@@ -26,4 +26,6 @@
     <string name="need_coarse_location">This feature works only with permission!</string>
     <string name="grant_via_system_settings">Please, give required permission in system settings</string>
     <string name="open_needed">For auto-switch add a tile and open the notification curtain </string>
+    <string name="menu_share_logs">Share logs</string>
+    <string name="title_share_file_with">Share file with</string>
 </resources>

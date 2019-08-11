@@ -19,4 +19,6 @@
     <string name="need_coarse_location">Разрешение необходимо для получения имени WiFi сети!</string>
     <string name="grant_via_system_settings">Дайте разрешение в системных настройках</string>
     <string name="open_needed">Для автопереключения необходимо добавить тайл и открывать шторку уведомлений!</string>
+    <string name="menu_share_logs">Отправить логи</string>
+    <string name="title_share_file_with">Отправить с помощью</string>
 </resources>

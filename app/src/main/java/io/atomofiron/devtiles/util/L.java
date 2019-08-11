@@ -1,6 +1,7 @@
 package io.atomofiron.devtiles.util;
 
 import android.annotation.SuppressLint;
+import android.net.Uri;
 import android.util.Log;
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,20 +15,25 @@ import java.util.*;
 
 import io.atomofiron.devtiles.BuildConfig;
 
+@SuppressWarnings("ResultOfMethodCallIgnored")
 @SuppressLint("SdCardPath")
 public class L {
     private static final String TAG = "devtiles";
-    private static final String PATH = "/data/data/" + BuildConfig.APPLICATION_ID + "/log.txt";
+    private static final String FILE_NAME = "/log.txt";
+    private static final String PATH = "/data/data/" + BuildConfig.APPLICATION_ID + FILE_NAME;
     private static final String PATH_OLD = "/data/data/" + BuildConfig.APPLICATION_ID + "/log_old.txt";
 
     private static final long MAX_FILE_LENGTH_BYTES = 1024L * 100;
     private static final SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss", Locale.US); // without YYYY-MM-dd_
     private static final Charset UTF_8 = Charset.forName("UTF-8");
 
+    public static final String FILE_TYPE = "text/*";
+    public static final Uri URI = Uri.parse(String.format("content://%s/%s", BuildConfig.APPLICATION_ID, FILE_NAME));
+
     private File oldFile = new File(PATH_OLD);
     private File file = new File(PATH);
 
-    public static final L instance = new L();
+    private static final L instance = new L();
 
     private static boolean logExceptions = true;
 
@@ -36,7 +42,6 @@ public class L {
             if (file.createNewFile())
                 Log.e(TAG, "[Logger] new file " + file.getAbsolutePath());
 
-            // todo remove this
             if (oldFile.length() > MAX_FILE_LENGTH_BYTES) {
                 oldFile.delete();
             }
@@ -77,24 +82,25 @@ public class L {
     public static void log(String label, String s) {
         String text = String.format("[%s] %s", label, s);
         Log.e(TAG, text);
-        L.instance.log(text);
+        if (L.instance != null)
+            L.instance.log(text);
     }
 
-    public static void appendText(File file, String text) throws IOException {
+    private static void appendText(File file, String text) throws IOException {
         appendBytes(file, text.getBytes(UTF_8));
     }
 
-    public static void appendBytes(File file, byte[] bytes) throws IOException {
+    private static void appendBytes(File file, byte[] bytes) throws IOException {
         FileOutputStream fos = new FileOutputStream(file, true);
         fos.write(bytes);
         fos.close();
     }
 
-    public static String readText(File file) throws IOException {
+    private static String readText(File file) throws IOException {
         return new String(readBytes(file), UTF_8);
     }
 
-    public static byte[] readBytes(File file) throws IOException {
+    private static byte[] readBytes(File file) throws IOException {
         InputStream fis = new FileInputStream(file);
         long length = file.length();
         if (length > Integer.MAX_VALUE) {

@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.ListPreference;
@@ -12,9 +13,12 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.preference.TwoStatePreference;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import io.atomofiron.devtiles.R;
 import io.atomofiron.devtiles.service.AdbTcpIpService;
+import io.atomofiron.devtiles.util.L;
 import io.atomofiron.devtiles.util.permission.PermissionCallback;
 import io.atomofiron.devtiles.util.permission.Permissions;
 
@@ -40,6 +44,28 @@ public class AdbSettingsActivity extends PreferenceActivity implements Preferenc
         preference = findPreference(getString(R.string.pref_key_auto_disable_adb));
         preference.setOnPreferenceChangeListener(this);
         onPreferenceChange(preference, sp.getBoolean(preference.getKey(), false));
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.settings, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.menu_shale_log) {
+            shareLog();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void shareLog() {
+        Intent sharingIntent = new Intent(Intent.ACTION_SEND)
+                .setType(L.FILE_TYPE)
+                .putExtra(Intent.EXTRA_STREAM, L.URI);
+        startActivity(Intent.createChooser(sharingIntent, getString(R.string.title_share_file_with)));
     }
 
     @Override
