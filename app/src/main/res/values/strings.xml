@@ -20,6 +20,7 @@
     <string name="pref_title_auto_enable_adb">Auto-enable TCP ADB</string>
     <string name="pref_title_auto_disable_adb">Auto-disable TCP ADB</string>
     <string name="pref_title_for_aps">For WiFi access points</string>
+    <string name="pref_summary_for_aps">Access point\'s name per line</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
     <string name="need_coarse_location">This feature works only with permission!</string>

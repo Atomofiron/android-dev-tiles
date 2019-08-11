@@ -11,6 +11,7 @@
     <EditTextPreference
         android:key="@string/pref_key_for_aps"
         android:title="@string/pref_title_for_aps"
+        android:summary="@string/pref_summary_for_aps"
         android:capitalize="words"
         android:inputType="textNoSuggestions|textImeMultiLine|textMultiLine"
         android:selectAllOnFocus="true"
